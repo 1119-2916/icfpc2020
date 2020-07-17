@@ -1,8 +1,11 @@
-FROM icfpcontest2020/cpp
+FROM icfpcontest2020/ultimate:latest
 
-WORKDIR /solution
+WORKDIR /source
+
 COPY . .
-RUN chmod +x ./build.sh
-RUN chmod +x ./run.sh
-RUN ./build.sh
-ENTRYPOINT ["./run.sh"]
+
+# build.sh might generate `run.sh`
+RUN /bin/bash /source/build.sh
+
+# Use /bin/bash to avoid issues with +x
+ENTRYPOINT ["/bin/bash", "/source/run.sh"]
