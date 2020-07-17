@@ -4,10 +4,10 @@
 
 ## Development
 
-| Directory | Usage |
-|---|---|
-| `app/` | The submission |
-| `tool/` | Code unrelated to the submission |
+| Directory | Usage                            |
+| --------- | -------------------------------- |
+| `app/`    | The submission                   |
+| `tool/`   | Code unrelated to the submission |
 
 ## Submission
 
@@ -24,5 +24,6 @@ Then, [submissions](https://icfpcontest2020.github.io/#/submissions) will be upd
 
 - [Ti11192916](https://github.com/1119-2916)
 - [remin](https://github.com/rdrgn)
+- [minaminao](https://github.com/minaminao)
 
 Please add your name.
