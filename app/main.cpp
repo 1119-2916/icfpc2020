@@ -20,10 +20,10 @@ int main(int argc, char *argv[]) {
     const std::string serverName = urlMatches[1];
     const int serverPort = std::stoi(urlMatches[2]);
     httplib::Client client(serverName, serverPort);
-    const std::shared_ptr<httplib::Response> serverResponse =
+    const std::shared_ptr<httplib::Response> serverResponse2 =
         client.Post(serverUrl.c_str(), playerKey.c_str(), "text/plain");
-    const std::shared_ptr<httplib::Response> serverResponse2 = client.Post(
-        (serverUrl + "/aliens/send").c_str(), playerKey.c_str(), "text/plain");
+    const std::shared_ptr<httplib::Response> serverResponse =
+        client.Get((serverUrl + "/scoreboard/lightning").c_str());
 
     if(!serverResponse) {
         std::cout << "Unexpected server response:\nNo response from server"
