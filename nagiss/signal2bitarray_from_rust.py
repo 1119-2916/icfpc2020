@@ -25,13 +25,18 @@ max_ = max(ds)
 for i in range(len(ds)):
     ds[i] /= max_
 
-width = 100
+width = 96
 height = 195
+
+offset = sample_rate * 3.0  # 3.0 (sec)
 
 mat = [[0]*width for _ in range(height)]
 for y in range(height):
     for x in range(width):
-        d =  ds[(x + y//4 * width) * 529 + 132400]
+        try:
+            d =  ds[int((x + y//4 * width) * 551.25 + offset)]  # 551.25 = 44100(Hz) * 0.05(sec) / 4
+        except IndexError:
+            continue  # 最後が途切れてしまう…
         mat[y][x] = d
 
 # 描画
