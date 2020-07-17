@@ -4,7 +4,10 @@
 
 ## Development
 
-TBD
+| Directory | Usage |
+|---|---|
+| `app/` | The submission |
+| `tool/` | Code unrelated to the submission |
 
 ## Submission
 
