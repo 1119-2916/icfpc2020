@@ -107,12 +107,37 @@ class div(abst):
     def excute(x):
         return div1(x)
 
+class t1(abst):
+    def __init__(self, x):
+        self.value = x
+    
+    def excute(self, x):
+        return self.value
+
+class t(abst):
+    def excute(x):
+        return t1(x)
+
+class f1(abst):
+    def __init__(self, x):
+        self.value = x
+    
+    def excute(self, x):
+        return x
+
+class f(abst):
+    def excute(x):
+        return f1(x)
+
 class eq1(abst):
     def __init__(self, x):
         self.value = x
     
     def excute(self, x):
-        return [self.value[0] == x[0]]
+        if self.value[0] == x[0]:
+            return t
+        else:
+            return f
 
 class eq(abst):
     def excute(x):
@@ -123,7 +148,10 @@ class lt1(abst):
         self.value = x
     
     def excute(self, x):
-        return [self.value[0] < x[0]]
+        if self.value[0] < x[0]:
+            return t
+        else:
+            return f
 
 class lt(abst):
     def excute(x):
@@ -186,8 +214,8 @@ seica['inc'] = inc
 seica['dec'] = dec
 seica['mul'] = mul
 seica['div'] = div
-seica['t'] = [True]
-seica['f'] = [False]
+seica['t'] = t
+seica['f'] = f
 seica['eq'] = eq
 seica['lt'] = lt
 seica['mod'] = mod
