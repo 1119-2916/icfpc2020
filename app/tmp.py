@@ -207,6 +207,27 @@ class b(abst):
     def excute(x):
         return b1(x)
 
+class s2(abst):
+    def __init__(self, x1, x2):
+        self.value1 = x1
+        self.value2 = x2
+    
+    def excute(self, x):
+        left = self.value1.excute(x)
+        right = self.value2.excute(x)
+        return left.excute(right)
+
+class s1(abst):
+    def __init__(self, x):
+        self.value = x
+    
+    def excute(self, x):
+        return s2(self.value, x)
+
+class s(abst):
+    def excute(x):
+        return s1(x)
+
 seica['nil'] = []
 seica['cons'] = con
 seica['add'] = add
@@ -223,9 +244,11 @@ seica['dem'] = dem
 seica['neg'] = neg
 seica['c'] = c
 seica['b'] = b
+seica['s'] = s
 
 
 now = iter('ap ap cons 8398848 ap ap cons 8407040 ap ap cons 8398849 ap ap cons 8407041 ap ap cons 8398850 ap ap cons 8402946 ap ap cons 8407042 ap ap cons 8398851 ap ap cons 8402947 ap ap cons 8407043 ap ap cons 8398852 ap ap cons 8402948 ap ap cons 8407044 ap ap cons 8390661 ap ap cons 8394757 ap ap cons 8398853 ap ap cons 8402949 ap ap cons 8407045 ap ap cons 8411141 ap ap cons 8415237 ap ap cons 8402950 nil')
 print(read(now))
 print(read(iter('ap ap ap c add 2 1')))
 print(read(iter('ap ap ap b inc dec 1')))
+print(read(iter('ap ap ap s mul ap add 1 6')))
