@@ -48,10 +48,15 @@ def PARSE_DEF(line):
     sp = line.split('=')
     name = sp[0].strip()
     expr_str = '='.join(sp[1:])
-    parts = expr_str.strip().split()
+    expr = PARSE_EXPR(expr_str)
+    return (name, expr)
+
+
+def  PARSE_EXPR(s):
+    parts = s.strip().split()
     p = Parser(parts)
     expr = PARSE_ONE(p)
-    return (name, expr)
+    return expr
 
 
 def PARSE_ONE(p):

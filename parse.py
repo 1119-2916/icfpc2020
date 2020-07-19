@@ -9,7 +9,10 @@ from defs import (
     Vect,
     nil,
 )
-from reader import PARSE_FUNCTIONS
+from reader import (
+    PARSE_FUNCTIONS,
+    PARSE_EXPR,
+)
 
 
 def ERROR(s):
@@ -112,6 +115,7 @@ def interact(state, event): # (flag, newstate, data) -> (newstate, multipledraw)
         return (newState, data)
     return interact(newState, SEND_TO_ALIEN_PROXY(data))
 
+
 def main():
     state = nil
     vector = Vect(0, 0)
@@ -125,7 +129,8 @@ def main():
 
 # これを動くようにしてほしい
 functions = {}
-print(eval(Ap(Atom('i'), Atom('1'))))
+print(eval(Ap(Atom('ap'), Atom('1'))))
+print(eval(PARSE_EXPR('ap ap ap i add 1 2')))
 
 
 
