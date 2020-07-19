@@ -9,21 +9,26 @@ class print_galaxy(tkinter.Frame):
         self.pack()
         
         master.title(u"galaxy")
-        master.geometry("1600x900")
+        master.geometry("1600x1000")
 
-        self.width = 1200
-        self.height = 800
+        self.width = 1600
+        self.height = 1000
         self.offset_x = self.width/2
         self.offset_y = self.height/2
-        self.cell_size = 6
+        self.cell_size = 5
 
-        self.canvas = tkinter.Canvas(master, width = 1600, height = 1000)
+        self.canvas = tkinter.Canvas(master, width = self.width, height = self.height)
         self.canvas.place(x=0, y=0)
         self.canvas.bind('<ButtonPress-1>', self.click)
+        self.canvas.bind('<ButtonPress-3>', self.save_state)
 
         self.clickx = 0
         self.clicky = 0
+        self.save_flag = 0
         self.images = []  # to hold the newly created image
+
+    def save_state(self, event):
+        self.save_flag = 1
 
     def redraw(self, input_images=[[(1,1),(1,2),(1,3)],[(1,3),(1,4)]]):
         # inf = 10000000
@@ -43,6 +48,7 @@ class print_galaxy(tkinter.Frame):
         #             max_y = vec[1]
         # self.cell_size = min(self.width // ((max_x - min_x) + 100), self.height // ((max_y - min_y) + 100))
 
+        self.save_flag = 0
         self.create_rectangle_with_alpha(0, 0, self.width, self.height, fill="black", outline="", alpha=0.4)
         for (image, i) in zip(input_images, range(len(input_images))):
             for vec in image:
