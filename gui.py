@@ -27,19 +27,6 @@ import colorsys
 
 sys.setrecursionlimit(1000000)
 
-CLICK_FILE = 'click.txt'
-COORD_PAT = re.compile(r'\d+\s+\d+')
-
-with open(CLICK_FILE, 'r') as f:
-    for line in f:
-        if line == 'end':
-            break
-        if line
-            corrds = line.split()
-        if len(coords) == 2:
-            [x, y] = coods
-
-
 stat = nil
 vector = [0, 0]
 root = tkinter.Tk()
@@ -48,8 +35,12 @@ while(True):
     (newState, images) = interact(proto=Atom('galaxy'), state=stat, pt=to_expr_vec(vector))
     gui.redraw(pre_multidraw(images))
     gui.mainloop()
-    pos = gui.get_click_point()
-    if gui.save_flag == 1:
-        print(stat)
-    vector = [pos[0], pos[1]]
-    stat = newState
+
+    if gui.clickx is not None:
+        pos = gui.get_click_point()
+        if gui.save_flag == 1:
+            print(stat)
+        vector = [pos[0], pos[1]]
+        stat = newState
+
+    gui.clickx = None
