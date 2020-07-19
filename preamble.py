@@ -100,4 +100,18 @@ def interact(proto=Atom('galaxy'), state=nil, pt=to_expr_vec([0, 0])):
 
 
 if __name__ == '__main__':
-    print(interact())
+    layers = (pre_multidraw(interact()[1]))
+    print(layers)
+    layer_chars = ['#', '@']
+
+    SZ = 15
+    SZ2 = SZ * 2
+
+    gamen = [['.' for j in range(SZ2)] for i in range(SZ2)]
+    for i in range(len(layers)):
+        layer = layers[i]
+        for to in layer:
+            print(to[0], to[1])
+            gamen[SZ + to[0]][SZ + to[1]] = layer_chars[i]
+
+    print('\n'.join([''.join(line) for line in gamen]))
