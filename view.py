@@ -2,6 +2,7 @@ import tkinter
 import tkinter.ttk
 from PIL import Image, ImageTk
 import colorsys
+from datetime import datetime
 
 class print_galaxy(tkinter.Frame):
     def __init__(self, master=None):
@@ -21,6 +22,9 @@ class print_galaxy(tkinter.Frame):
         self.canvas.place(x=0, y=0)
         self.canvas.bind('<ButtonPress-1>', self.click)
         self.canvas.bind('<ButtonPress-3>', self.save_state)
+
+        now = datetime.now()
+        self.filename = str(now.timestamp()) + ".txt"
 
         self.clickx = 0
         self.clicky = 0

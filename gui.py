@@ -36,7 +36,7 @@ while(True):
     gui.redraw(pre_multidraw(images))
     gui.mainloop()
     pos = gui.get_click_point()
-    if gui.save_flag == 1:
-        print(stat)
+    with open(gui.filename, mode='a') as f:
+        f.write(str(stat)+"\n")
     vector = [pos[0], pos[1]]
     stat = newState
