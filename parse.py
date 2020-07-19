@@ -12,15 +12,20 @@ from defs import (
 from reader import PARSE_FUNCTIONS
 
 
+def ERROR(s):
+    raise Exception(s)
+
 def PARSE_NUMBER(s):
     return int(s)
 
+def cppdiv(a, b):
+    return abs(a)//abs(b)*(1-((a>0)^(b>0))*2)
 
-def asNum(expr): # Atom(Expr) -> number
-    if (isinstance(expr, Atom)):
+
+def asNum(n): # Atom(Expr) -> number
+    if type(n) is Atom:  # isinstance は継承元のクラスでも True を返す
         return PARSE_NUMBER(n.Name)
-    raise Exception("not a number")
-
+    ERROR("not a number")
 
 def evalCons(a, b): # (Expr, Expr) -> Expr
     cons = Atom("cons")
@@ -28,74 +33,72 @@ def evalCons(a, b): # (Expr, Expr) -> Expr
     res.Evaluated = res
     return res
 
-
 def eval(expr): # Expr -> Expr
-    if (expr.Evaluated != None):
+    if expr.Evaluated is not None:
         return expr.Evaluated
     initialExpr = expr
-    while (True):
+    while True:
         result = tryEval(expr)
-        if (result == expr):
+        if result == expr:
             initialExpr.Evaluated = result
             return result
         expr = result
- 
 
 def tryEval(expr): # Expr -> Expr
     t = Atom("t")
     f = Atom("f")
 
-    if (expr.Evaluated != None):
+    if expr.Evaluated is not None:
         return expr.Evaluated
-    if (isinstance(expr, Atom) and functions[expr.Name] != None):
+    if type(expr) is Atom and functions[expr.Name] is not None:
         return functions[expr.Name]
-    if (isinstance(expr, Ap)):
+    if type(expr) is Ap:
         fun = eval(expr.Fun)
         x = expr.Arg
-        if (isinstance(fun, Atom)): # 1 arg
-            if (fun.Name == "neg"):
+        if type(fun) is Atom: # 1 arg
+            if fun.Name == "neg":
                 return Atom(-asNum(eval(x)))
-            if (fun.Name == "i"):
+            if fun.Name == "i":
                 return x
-            if (fun.Name == "nil"):
+            if fun.Name == "nil":
                 return t
-            if (fun.Name == "isnil"):
+            if fun.Name == "isnil":
                 return Ap(x, Ap(t, Ap(t, f)))
-            if (fun.Name == "car"):
+            if fun.Name == "car":
                 return Ap(x, t)
-            if (fun.Name == "cdr"):
+            if fun.Name == "cdr":
                 return Ap(x, f)
-        if (isinstance(fun, Ap)):
+        if type(fun) is Ap:
             fun2 = eval(fun.Fun)
             y = fun.Arg
-            if (isinstance(fun2, Atom)): # 2 args
-                if (fun2.Name == "t"):
+            if type(fun2) is Atom: # 2 args
+                if fun2.Name == "t":
                     return y
-                if (fun2.Name == "f"):
+                if fun2.Name == "f":
                     return x
-                if (fun2.Name == "add"):
+                if fun2.Name == "add":
                     return Atom(asNum(eval(x)) + asNum(eval(y)))
-                if (fun2.Name == "mul"):
+                if fun2.Name == "mul":
                     return Atom(asNum(eval(x)) * asNum(eval(y)))
-                if (fun2.Name == "div"):
-                    return Atom(asNum(eval(y)) / asNum(eval(x)))
-                if (fun2.Name == "lt"):
+                if fun2.Name == "div":
+                    return Atom(cppdiv(asNum(eval(y)), asNum(eval(x))))
+                if fun2.Name == "lt":
                     return t if asNum(eval(y)) < asNum(eval(x)) else f
-                if (fun2.Name == "eq"):
+                if fun2.Name == "eq":
                     return t if asNum(eval(x)) == asNum(eval(y)) else f
-                if (fun2.Name == "cons"):
+                if fun2.Name == "cons":
                     return evalCons(y, x)
-            if (isinstance(fun2, Ap)):
+            if type(fun2) is Ap:
                 fun3 = eval(fun2.Fun)
                 z = fun2.Arg
-                if (isinstance(fun3, Atom)): # 3 args
-                    if (fun3.Name == "s"):
+                if type(fun3) is Atom: # 3 args
+                    if fun3.Name == "s":
                         return Ap(Ap(z, x), Ap(y, x))
-                    if (fun3.Name == "c"):
+                    if fun3.Name == "c":
                         return Ap(Ap(z, x), y)
-                    if (fun3.Name == "b"):
+                    if fun3.Name == "b":
                         return Ap(z, Ap(y, x))
-                    if (fun3.Name == "cons"):
+                    if fun3.Name == "cons":
                         return Ap(Ap(x, z), y)
     return expr
 
