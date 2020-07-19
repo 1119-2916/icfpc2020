@@ -6,7 +6,7 @@ class Expr:
 class Atom(Expr):
     def __init__(self, Name):
         super().__init__()
-        self.Name = Name
+        self.Name = str(Name)
 
     def __str__(self):
         return "Atom('{}')".format(self.Name)
