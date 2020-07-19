@@ -31,7 +31,7 @@ class print_galaxy(tkinter.Frame):
         now = datetime.now()
         self.filename = str(now.timestamp()) + ".txt"
 
-        self.clickx = 0
+        self.clickx = None
         self.clicky = 0
         self.save_flag = 0
         self.images = []  # to hold the newly created image

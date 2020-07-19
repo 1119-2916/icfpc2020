@@ -28,7 +28,7 @@ import colorsys
 sys.setrecursionlimit(1000000)
 
 stat = nil
-vector = [0, 0]
+vector = [-1000, 0]
 root = tkinter.Tk()
 gui = print_galaxy(master=root)
 next_upd = True
