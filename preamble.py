@@ -40,9 +40,8 @@ def check_list(expr):
         or check_nonnull_list(expr)
     )
 
-def to_list(expr0):
+def to_list(expr):
     res = []
-    expr = expr0
     if not check_list(expr):
         raise Exception('invalid list!')
     while not check_nil(expr):
@@ -62,7 +61,7 @@ def to_list(expr0):
 def to_expr_list(vs):
     if len(vs) == 0:
         return nil
-    return Ap(Ap(Atom('cons'), Atom(str(vs[0]))), to_expr_vec(vs[1:]))
+    return Ap(Ap(Atom('cons'), Atom(str(vs[0]))), to_expr_list(vs[1:]))
 
 def to_expr_vec(vs):
     if len(vs) < 2:
