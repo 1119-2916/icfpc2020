@@ -11,7 +11,7 @@ class print_galaxy(tkinter.Frame):
         master.title(u"galaxy")
         master.geometry("800x800")
 
-        self.canvas = tkinter.Canvas(root, width = 800, height = 800)
+        self.canvas = tkinter.Canvas(master, width = 800, height = 800)
         self.canvas.place(x=0, y=0)
         self.canvas.bind('<ButtonPress-1>', self.click)
 
@@ -32,7 +32,7 @@ class print_galaxy(tkinter.Frame):
         self.images = []
         self.clickx = (event.x-400)//10
         self.clicky = (event.y-400)//10
-        root.quit()
+        self.master.quit()
         print(self.clickx, self.clicky)
         return ((event.x-400)//10, (event.y-400)//10)
 
@@ -43,7 +43,7 @@ class print_galaxy(tkinter.Frame):
         if 'alpha' in kwargs:
             alpha = int(kwargs.pop('alpha') * 255)
             fill = kwargs.pop('fill')
-            fill = root.winfo_rgb(fill) + (alpha,)
+            fill = self.master.winfo_rgb(fill) + (alpha,)
             image = Image.new('RGBA', (x2-x1, y2-y1), fill)
             self.images.append(ImageTk.PhotoImage(image))
             self.canvas.create_image(x1, y1, image=self.images[-1], anchor='nw')
