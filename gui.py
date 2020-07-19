@@ -27,6 +27,19 @@ import colorsys
 
 sys.setrecursionlimit(1000000)
 
+CLICK_FILE = 'click.txt'
+COORD_PAT = re.compile(r'\d+\s+\d+')
+
+with open(CLICK_FILE, 'r') as f:
+    for line in f:
+        if line == 'end':
+            break
+        if line
+            corrds = line.split()
+        if len(coords) == 2:
+            [x, y] = coods
+
+
 stat = nil
 vector = [0, 0]
 root = tkinter.Tk()
