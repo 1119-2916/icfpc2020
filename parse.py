@@ -32,166 +32,178 @@ def asNum(n):  # Atom(Expr) -> number
 
 
 def eval(expr_):
-    st = [["eval", {"expr": expr_, "state": 0}]]
+    EVAL = 0
+    EVALCONS = 1
+    TRYEVAL = 2
+
+    STATE = 0
+    EXPR = 1
+    INITIALEXPR = 2
+    A = 1
+    B = 2
+    FUN = 2
+    X = 3
+    FUN2 = 4
+    Y = 5
+
+    st = [[EVAL, [0, expr_, None]]]
     res = None
     while st:
         func, env = st[-1]
-        if func == "eval":
-            if env["state"] == 1:
-                env["result"] = res
-                if env["result"] == env["expr"]:
-                    env["initialExpr"].Evaluated = env["result"]
-                    res = env["result"]
+        if func == EVAL:
+            expr = env[EXPR]
+            if env[STATE] == 1:
+                if res == expr:
+                    env[INITIALEXPR].Evaluated = res
                     del st[-1]
                     continue
-                env["expr"] = env["result"]
-                st.append(["tryEval", {"expr": env["expr"], "state": 0}])
-            elif env["state"] == 0:
-                if env["expr"].Evaluated is not None:
-                    res = env["expr"].Evaluated
-                    del st[-1]
-                    continue
-                env["initialExpr"] = env["expr"]
-                st.append(["tryEval", {"expr": env["expr"], "state": 0}])
-                env["state"] = 1
+                env[EXPR] = res
+                st.append([TRYEVAL, [0, res, None, None, None, None]])
             else:
-                assert False
-        elif func == "evalCons":
-            if env["state"] == 0:
-                st.append(["eval", {"expr": env["a"], "state": 0}])
-                env["state"] = 1
-            elif env["state"] == 1:
-                env["a"] = res
-                st.append(["eval", {"expr": env["b"], "state": 0}])
-                env["state"] = 2
-            elif env["state"] == 2:
-                env["b"] = res
-                res = Ap(Ap(Atom("cons"), env["a"]), env["b"])
+                assert env[STATE] == 0
+                if expr.Evaluated is not None:
+                    res = expr.Evaluated
+                    del st[-1]
+                    continue
+                env[INITIALEXPR] = expr
+                st.append([TRYEVAL, [0, expr, None, None, None, None]])
+                env[STATE] = 1
+        elif func == EVALCONS:
+            if env[STATE] == 0:
+                st.append([EVAL, [0, env[A], None]])
+                env[STATE] = 1
+            elif env[STATE] == 1:
+                env[A] = res
+                st.append([EVAL, [0, env[B], None]])
+                env[STATE] = 2
+            else:
+                assert env[STATE] == 2
+                res = Ap(Ap(Atom("cons"), env[A]), res)
                 res.Evaluated = res
                 del st[-1]
-            else:
-                assert False
-        elif func == "tryEval":
-            if env["state"] == 0:
-                env["t"] = Atom("t")
-                env["f"] = Atom("f")
-                if env["expr"].Evaluated is not None:
-                    res = env["expr"].Evaluated
+        elif func == TRYEVAL:
+            expr = env[EXPR]
+            state = env[STATE]
+            if state == 0:
+                if expr.Evaluated is not None:
+                    res = expr.Evaluated
                     del st[-1]
-                    continue
-                if type(env["expr"]) is Atom and functions.get(env["expr"].Name) is not None:
-                    res = functions.get(env["expr"].Name)
+                elif type(expr) is Atom and functions.get(expr.Name) is not None:
+                    res = functions.get(expr.Name)
                     del st[-1]
+                elif type(expr) is Ap:
+                    st.append([EVAL, [0, expr.Fun, None]])
+                    env[STATE] = 1
+                else:
+                    res = expr
+                    del st[-1]
+            elif state == 1:
+                env[FUN] = fun = res
+                env[X] = x = expr.Arg
+                if type(fun) is Atom:  # 1 arg
+                    if fun.Name == "neg":
+                        st.append([EVAL, [0, x, None]])
+                        env[STATE] = 2
+                        continue
+                    elif fun.Name == "i":
+                        res = x
+                        del st[-1]
+                        continue
+                    elif fun.Name == "nil":
+                        res = Atom("t")
+                        del st[-1]
+                        continue
+                    elif fun.Name == "isnil":
+                        res = Ap(x, Ap(Atom("t"), Ap(Atom("t"), Atom("f"))))
+                        del st[-1]
+                        continue
+                    elif fun.Name == "car":
+                        res = Ap(x, Atom("t"))
+                        del st[-1]
+                        continue
+                    elif fun.Name == "cdr":
+                        res = Ap(x, Atom("f"))
+                        del st[-1]
+                        continue
+                if type(fun) is Ap:
+                    st.append([EVAL, [0, fun.Fun, None]])
+                    env[STATE] = 3
                     continue
-                if type(env["expr"]) is Ap:
-                    st.append(["eval", {"expr": env["expr"].Fun, "state": 0}])
-                    env["state"] = 1
-                    continue
-                res = env["expr"]
+                res = expr
                 del st[-1]
-            elif env["state"] == 1:
-                env["fun"] = res
-                env["x"] = env["expr"].Arg
-                if type(env["fun"]) is Atom:  # 1 arg
-                    if env["fun"].Name == "neg":
-                        st.append(["eval", {"expr": env["x"], "state": 0}])
-                        env["state"] = 2
-                        continue
-                    if env["fun"].Name == "i":
-                        res = env["x"]
-                        del st[-1]
-                        continue
-                    if env["fun"].Name == "nil":
-                        res = env["t"]
-                        del st[-1]
-                        continue
-                    if env["fun"].Name == "isnil":
-                        res = Ap(env["x"], Ap(env["t"], Ap(env["t"], env["f"])))
-                        del st[-1]
-                        continue
-                    if env["fun"].Name == "car":
-                        res = Ap(env["x"], env["t"])
-                        del st[-1]
-                        continue
-                    if env["fun"].Name == "cdr":
-                        res = Ap(env["x"], env["f"])
-                        del st[-1]
-                        continue
-                if type(env["fun"]) is Ap:
-                    st.append(["eval", {"expr": env["fun"].Fun, "state": 0}])
-                    env["state"] = 3
-                    continue
-                res = env["expr"]
-                del st[-1]
-            elif env["state"] == 2:
+            elif state == 2:
                 res = Atom(-asNum(res))
                 del st[-1]
-            elif env["state"] == 3:
-                env["fun2"] = res
-                env["y"] = env["fun"].Arg
-                if type(env["fun2"]) is Atom:  # 2 args
-                    if env["fun2"].Name == "t":
-                        res = env["y"]
+            elif state == 3:
+                env[FUN2] = fun2 = res
+                env[Y] = y = env[FUN].Arg
+                if type(fun2) is Atom:  # 2 args
+                    if fun2.Name == "t":
+                        res = y
                         del st[-1]
                         continue
-                    if env["fun2"].Name == "f":
-                        res = env["x"]
+                    elif fun2.Name == "f":
+                        res = env[X]
                         del st[-1]
                         continue
-                    if env["fun2"].Name in {"add", "mul", "div", "lt", "eq"}:
-                        st.append(["eval", {"expr": env["x"], "state": 0}])
-                        env["state"] = 4
+                    elif fun2.Name in {"add", "mul", "div", "lt", "eq"}:
+                        st.append([EVAL, [0, env[X], None]])
+                        env[STATE] = 4
                         continue
-                    if env["fun2"].Name == "cons":
-                        st.append(["evalCons", {"a": env["y"], "b": env["x"], "state": 0}])
-                        env["state"] = 6
+                    elif fun2.Name == "cons":
+                        st.append([EVALCONS, [0, y, env[X]]])
+                        env[STATE] = 6
                         continue
-                if type(env["fun2"]) is Ap:
-                    st.append(["eval", {"expr": env["fun2"].Fun, "state": 0}])
-                    env["state"] = 7
+                if type(fun2) is Ap:
+                    st.append([EVAL, [0, fun2.Fun, None]])
+                    env[STATE] = 7
                     continue
-                res = env["expr"]
+                res = expr
                 del st[-1]
-            elif env["state"] == 4:
-                env["x"] = res
-                st.append(["eval", {"expr": env["y"], "state": 0}])
-                env["state"] = 5
-            elif env["state"] == 5:
-                env["y"] = res
-                if env["fun2"].Name == "add":
-                    res = Atom(asNum(env["x"]) + asNum(env["y"]))
-                elif env["fun2"].Name == "mul":
-                    res = Atom(asNum(env["x"]) * asNum(env["y"]))
-                elif env["fun2"].Name == "div":
-                    res = Atom(cppdiv(asNum(env["y"]), asNum(env["x"])))
-                elif env["fun2"].Name == "lt":
-                    res = env["t"] if asNum(env["y"]) < asNum(env["x"]) else env["f"]
-                elif env["fun2"].Name == "eq":
-                    res = env["t"] if asNum(env["x"]) == asNum(env["y"]) else env["f"]
+            elif state == 4:
+                env[X] = res
+                st.append([EVAL, [0, env[Y], None]])
+                env[STATE] = 5
+            elif state == 5:
+                x = env[X]
+                y = res
+                fun2_Name = env[FUN2].Name
+                if fun2_Name == "add":
+                    res = Atom(asNum(x) + asNum(y))
+                elif fun2_Name == "mul":
+                    res = Atom(asNum(x) * asNum(y))
+                elif fun2_Name == "div":
+                    res = Atom(cppdiv(asNum(y), asNum(x)))
+                elif fun2_Name == "lt":
+                    res = Atom("t") if asNum(y) < asNum(x) else Atom("f")
+                elif fun2_Name == "eq":
+                    res = Atom("t") if asNum(x) == asNum(y) else Atom("f")
                 else:
                     assert False
                 del st[-1]
-            elif env["state"] == 6:
+            elif state == 6:
                 del st[-1]
-            elif env["state"] == 7:
-                env["fun3"] = res
-                env["z"] = env["fun2"].Arg
-                if type(env["fun3"]) is Atom:  # 3 args
-                    if env["fun3"].Name == "s":
-                        res = Ap(Ap(env["z"], env["x"]), Ap(env["y"], env["x"]))
-                    elif env["fun3"].Name == "c":
-                        res = Ap(Ap(env["z"], env["x"]), env["y"])
-                    elif env["fun3"].Name == "b":
-                        res = Ap(env["z"], Ap(env["y"], env["x"]))
-                    elif env["fun3"].Name == "cons":
-                        res = Ap(Ap(env["x"], env["z"]), env["y"])
+            elif state == 7:
+                fun3 = res
+                x = env[X]
+                y = env[Y]
+                z = env[FUN2].Arg
+                if type(fun3) is Atom:  # 3 args
+                    if fun3.Name == "s":
+                        res = Ap(Ap(z, x), Ap(y, x))
+                    elif fun3.Name == "c":
+                        res = Ap(Ap(z, x), y)
+                    elif fun3.Name == "b":
+                        res = Ap(z, Ap(y, x))
+                    elif fun3.Name == "cons":
+                        res = Ap(Ap(x, z), y)
                     else:
                         assert False, "b"
-                        res = env["expr"]
+                        res = expr
                     del st[-1]
                     continue
                 assert False, "a"
-                res = env["expr"]
+                res = expr
                 del st[-1]
             else:
                 assert False
