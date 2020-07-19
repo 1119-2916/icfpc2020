@@ -31,12 +31,17 @@ stat = nil
 vector = [0, 0]
 root = tkinter.Tk()
 gui = print_galaxy(master=root)
+next_upd = True
 while(True):
-    (newState, images) = interact(proto=Atom('galaxy'), state=stat, pt=to_expr_vec(vector))
+    if next_upd:
+        (newState, images) = interact(proto=Atom('galaxy'), state=stat, pt=to_expr_vec(vector))
+
+    next_upd = False
     gui.redraw(pre_multidraw(images))
     gui.mainloop()
 
     if gui.clickx is not None:
+        print('calculating...')
         pos = gui.get_click_point()
         if gui.save_flag == 1:
             print(stat)
@@ -44,5 +49,7 @@ while(True):
             f.write(str(stat)+"\n")
         vector = [pos[0], pos[1]]
         stat = newState
+        next_upd = True
 
     gui.clickx = None
+    print('done')

@@ -70,6 +70,7 @@ class print_galaxy(tkinter.Frame):
 
 
     def save_state(self, event):
+        print('save state!')
         self.save_flag = 1
 
     def redraw(self, input_images=[[(1,1),(1,2),(1,3)],[(1,3),(1,4)]]):
@@ -105,11 +106,13 @@ class print_galaxy(tkinter.Frame):
             self.zoom_in()
 
     def zoom_in(self):
+        print("zoom_in...")
         self.cell_size_i += 1
         self.images = []
         self.master.quit()
 
     def zoom_out(self):
+        print("zoom_out...")
         self.cell_size_i -= 1
         self.images = []
         self.master.quit()

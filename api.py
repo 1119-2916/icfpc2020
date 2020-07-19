@@ -100,7 +100,10 @@ def dem(bitseq):
 
 def send_message(expr):
     query = mod(expr)
-    answer = dem(call_api(query))
+    print("send: {}".format(query))
+    raw = call_api(query)
+    answer = dem(raw)
+    print("recieved: {}".format(raw))
     return answer
 
 
