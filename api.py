@@ -10,6 +10,7 @@ from defs import (
 )
 from parse import (
     asNum,
+    eval,
 )
 from reader import (
     isNumerical,
@@ -57,8 +58,10 @@ def mod(expr):
     if type(expr) is Atom:
         if isNumerical(expr.Name):
             return mod_num(asNum(expr))
+        if expr.Name == 'nil':
+            return '00'
         raise Exception('parse error: mod: illegal num: {}'.format(expr.Name))
-    return "".join(["11" + mod(el) for el in to_list(expr)]) + "1100"
+    return '11' + mod(eval(Ap(Atom('car'), expr))) + mod(eval(Ap(Atom('cdr'), expr)))
 
 def dem_len_num(p):
     ln = 0
@@ -86,14 +89,9 @@ def dem0(p):
     elif head == '10':
         return Atom(str(-1 * dem_len_num(p)))
     elif head == '11':
-        ls = []
-        while True:
-            if p.peek(2) == '11':
-                p.get(2)
-            if p.peek(2) == '00':
-                p.get(2)
-                return to_expr(ls)
-            ls.append(dem0(p))
+        e1 = dem0(p)
+        e2 = dem0(p)
+        return Ap(Ap(Atom('cons'), e1), e2)
     raise Exception('parse error: dem0')
 
 def dem(bitseq):
@@ -124,4 +122,4 @@ class Parser:
 
 
 if __name__ == '__main__':
-    print(mod(dem('1101100001110110010011011000101110100100111110110001010001110111001000000100011011100001001111001100')))
+    print(mod(dem('1101100001111101100010110110001100110110010000')))
