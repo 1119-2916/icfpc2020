@@ -4,7 +4,7 @@ from PIL import Image, ImageTk
 import colorsys
 
 class print_galaxy(tkinter.Frame):
-    def __init__(self, master=None, input_images=[[(1,1),(1,2),(1,3)],[(1,3),(1,4)]]):
+    def __init__(self, master=None):
         super().__init__(master)
         self.pack()
         
@@ -15,8 +15,11 @@ class print_galaxy(tkinter.Frame):
         self.canvas.place(x=0, y=0)
         self.canvas.bind('<ButtonPress-1>', self.click)
 
+        self.clickx = 0
+        self.clicky = 0
         self.images = []  # to hold the newly created image
 
+    def redraw(self, input_images=[[(1,1),(1,2),(1,3)],[(1,3),(1,4)]]):
         offset_x = 400
         offset_y = 400       
         for (image, i) in zip(input_images, range(len(input_images))):
@@ -26,8 +29,15 @@ class print_galaxy(tkinter.Frame):
                 self.create_rectangle_with_alpha(offset_x+vec[0]*10, offset_y+vec[1]*10, offset_x+(vec[0]+1)*10, offset_y+(vec[1]+1)*10, fill=col, outline="", alpha=0.4)
 
     def click(self, event):
-        print(((event.x-400)//10, (event.y-400)//10))
+        self.images = []
+        self.clickx = (event.x-400)//10
+        self.clicky = (event.y-400)//10
+        root.quit()
+        print(self.clickx, self.clicky)
         return ((event.x-400)//10, (event.y-400)//10)
+
+    def get_click_point(self):
+        return (self.clickx, self.clicky)
 
     def create_rectangle_with_alpha(self, x1, y1, x2, y2, **kwargs):
         if 'alpha' in kwargs:
@@ -56,6 +66,14 @@ class print_galaxy(tkinter.Frame):
             col += format(int(b*255), 'x')
         return col
 
-root = tkinter.Tk()
-gui = print_galaxy(master=root)
-gui.mainloop()
+# state = nil
+# vector = Vect(0, 0)
+# root = tkinter.Tk()
+# gui = print_galaxy(master=root)
+# while(True):
+#     # interact
+#     # 前処理
+#     gui.redraw(input_images)
+#     gui.mainloop() # clickが動くまで無限ループ
+#     vector = gui.get_click_point()
+#     state = newState    
