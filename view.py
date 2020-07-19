@@ -9,32 +9,63 @@ class print_galaxy(tkinter.Frame):
         self.pack()
         
         master.title(u"galaxy")
-        master.geometry("800x800")
+        master.geometry("1600x1000")
 
-        self.canvas = tkinter.Canvas(master, width = 800, height = 800)
+        self.width = 1600
+        self.height = 1000
+        self.offset_x = self.width/2
+        self.offset_y = self.height/2
+        self.cell_size = 5
+
+        self.canvas = tkinter.Canvas(master, width = self.width, height = self.height)
         self.canvas.place(x=0, y=0)
         self.canvas.bind('<ButtonPress-1>', self.click)
+        self.canvas.bind('<ButtonPress-3>', self.save_state)
 
         self.clickx = 0
         self.clicky = 0
+        self.save_flag = 0
         self.images = []  # to hold the newly created image
 
+    def save_state(self, event):
+        self.save_flag = 1
+
     def redraw(self, input_images=[[(1,1),(1,2),(1,3)],[(1,3),(1,4)]]):
-        offset_x = 400
-        offset_y = 400       
+        # inf = 10000000
+        # min_x = inf
+        # min_y = inf
+        # max_x = -inf
+        # max_y = -inf
+        # for image in input_images:
+        #     for vec in image:
+        #         if min_x > vec[0]:
+        #             min_x = vec[0]
+        #         if min_y > vec[1]:
+        #             min_y = vec[1]
+        #         if max_x < vec[0]:
+        #             max_x = vec[0]
+        #         if max_y < vec[1]:
+        #             max_y = vec[1]
+        # self.cell_size = min(self.width // ((max_x - min_x) + 100), self.height // ((max_y - min_y) + 100))
+
+        self.save_flag = 0
+        self.create_rectangle_with_alpha(0, 0, self.width, self.height, fill="black", outline="", alpha=0.4)
         for (image, i) in zip(input_images, range(len(input_images))):
-            self.create_rectangle_with_alpha(0, 0, 800, 800, fill="black", outline="", alpha=0.4)
             for vec in image:
                 col = self.hsv_to_colorcode(1.0 / len(input_images) * i, 1.0, 0.8)
-                self.create_rectangle_with_alpha(offset_x+vec[0]*10, offset_y+vec[1]*10, offset_x+(vec[0]+1)*10, offset_y+(vec[1]+1)*10, fill=col, outline="", alpha=0.4)
+                sx = int(self.offset_x+vec[0]*self.cell_size)
+                sy = int(self.offset_y+vec[1]*self.cell_size)
+                gx = int(self.offset_x+(vec[0]+1)*self.cell_size)
+                gy = int(self.offset_y+(vec[1]+1)*self.cell_size)
+                self.create_rectangle_with_alpha(sx, sy, gx, gy, fill=col, outline="", alpha=0.4)
 
     def click(self, event):
         self.images = []
-        self.clickx = (event.x-400)//10
-        self.clicky = (event.y-400)//10
+        self.clickx = (int)(event.x-self.offset_x)//self.cell_size
+        self.clicky = (int)(event.y-self.offset_y)//self.cell_size
         self.master.quit()
         print(self.clickx, self.clicky)
-        return ((event.x-400)//10, (event.y-400)//10)
+        # return ((event.x-self.off)//10, (event.y-400)//10)
 
     def get_click_point(self):
         return (self.clickx, self.clicky)
