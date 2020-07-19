@@ -24,6 +24,7 @@ import tkinter
 import tkinter.ttk
 from PIL import Image, ImageTk
 import colorsys
+from datetime import datetime
 
 sys.setrecursionlimit(1000000)
 
@@ -38,6 +39,7 @@ while(True):
 
     next_upd = False
     gui.redraw(pre_multidraw(images))
+    print('done')
     gui.mainloop()
 
     if gui.clickx is not None:
@@ -45,11 +47,13 @@ while(True):
         pos = gui.get_click_point()
         if gui.save_flag == 1:
             print(stat)
-        with open(gui.filename, mode='a') as f:
+        now = datetime.now()
+        filename = str(now.timestamp()) + ".txt"
+        print("write log: {}".format("logs/" + filename))
+        with open("logs/" + filename, mode='a') as f:
             f.write(str(stat)+"\n")
         vector = [pos[0], pos[1]]
         stat = newState
         next_upd = True
 
     gui.clickx = None
-    print('done')

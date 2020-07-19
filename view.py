@@ -2,7 +2,6 @@ import tkinter
 import tkinter.ttk
 from PIL import Image, ImageTk
 import colorsys
-from datetime import datetime
 
 cell_size_list = [1, 2, 4, 6, 10, 20, 30, 50]
 
@@ -27,9 +26,6 @@ class print_galaxy(tkinter.Frame):
         self.canvas.bind('<ButtonPress-3>', self.save_state)
         self.canvas.bind("<Key>", self.key)
         self.canvas.bind("<MouseWheel>", self.on_mouse_wheel)
-
-        now = datetime.now()
-        self.filename = str(now.timestamp()) + ".txt"
 
         self.clickx = None
         self.clicky = 0
