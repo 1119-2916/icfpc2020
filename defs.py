@@ -8,6 +8,9 @@ class Atom(Expr):
         super().__init__()
         self.Name = Name
 
+    def __str__(self):
+        return "Atom({})".format(self.Name)
+
 
 class Ap(Expr):
     def __init__(self, Fun, Arg):
@@ -15,11 +18,16 @@ class Ap(Expr):
         self.Fun = Fun
         self.Arg = Arg
 
+    def __str__(self):
+        return "Ap({}, {})".format(self.Fun, self.Arg)
 
 class Vect:
     def __init__(self, X, Y):
         self.X = X
         self.Y = Y
+
+    def __str__(self):
+        return "Vect({}, {})".format(self.X, self.Arg)
 
 
 nil = Atom("nil")

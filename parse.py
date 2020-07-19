@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+import sys
+sys.setrecursionlimit(100000)
 
 from defs import (
     Expr,
@@ -124,4 +126,6 @@ def main():
 
 
 
-# functions = PARSE_FUNCTIONS("galaxy.txt")
+functions = PARSE_FUNCTIONS("galaxy.txt")
+print(functions)
+print({key: str(val) for (key, val) in functions.items()})
