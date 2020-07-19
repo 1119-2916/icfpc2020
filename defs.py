@@ -11,6 +11,9 @@ class Atom(Expr):
     def __str__(self):
         return "Atom('{}')".format(self.Name)
 
+    def dump(self):
+        return self.Name
+
 
 class Ap(Expr):
     def __init__(self, Fun, Arg):
@@ -20,6 +23,9 @@ class Ap(Expr):
 
     def __str__(self):
         return "Ap({}, {})".format(self.Fun, self.Arg)
+
+    def dump(self):
+        return "ap {} {}".format(self.Fun.dump(), self.Arg.dump())
 
 class Vect:
     def __init__(self, X, Y):

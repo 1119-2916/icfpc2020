@@ -16,6 +16,9 @@ from preamble import (
     interact,
     pre_multidraw,
 )
+from reader import (
+    PARSE_EXPR,
+)
 from util import (
     to_expr_vec,
 )
@@ -25,11 +28,19 @@ import tkinter.ttk
 from PIL import Image, ImageTk
 import colorsys
 from datetime import datetime
+from pathlib import Path
 
 sys.setrecursionlimit(1000000)
 
 stat = nil
-vector = [-1000, 0]
+
+if len(sys.argv) >= 2:
+    readfile = sys.argv[1]
+    with open(readfile, 'r') as f:
+        line = f.readline()
+        stat = PARSE_EXPR(line)
+
+vector = [-10000, -10000]
 root = tkinter.Tk()
 gui = print_galaxy(master=root)
 next_upd = True
@@ -51,7 +62,7 @@ while(True):
         filename = str(now.timestamp()) + ".txt"
         print("write log: {}".format("logs/" + filename))
         with open("logs/" + filename, mode='a') as f:
-            f.write(str(stat)+"\n")
+            f.write(newState.dump()+"\n")
         vector = [pos[0], pos[1]]
         stat = newState
         next_upd = True
