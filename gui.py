@@ -1,4 +1,5 @@
 # 描画の前処理
+import sys
 
 from defs import (
     Expr,
@@ -11,11 +12,20 @@ from parse import (
     eval,
     asNum,
 )
+from preamble import (
+    interact,
+    pre_multidraw,
+)
+from util import (
+    to_expr_vec,
+)
 from view import print_galaxy
 import tkinter
 import tkinter.ttk
 from PIL import Image, ImageTk
 import colorsys
+
+sys.setrecursionlimit(1000000)
 
 stat = nil
 vector = [0, 0]
