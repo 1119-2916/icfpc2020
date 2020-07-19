@@ -58,10 +58,14 @@ def to_list(expr):
 
     return res
 
-def to_expr_list(vs):
-    if len(vs) == 0:
+def to_expr(vs):
+    if type(vs) == list and len(vs) == 0:
         return nil
-    return Ap(Ap(Atom('cons'), Atom(str(vs[0]))), to_expr_list(vs[1:]))
+    if type(vs) == int:
+        return Atom(str(vs))
+    if isinstance(vs, Expr):
+        return vs
+    return Ap(Ap(Atom('cons'), to_expr(vs[0])), to_expr(vs[1:]))
 
 def to_expr_vec(vs):
     if len(vs) < 2:

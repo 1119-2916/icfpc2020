@@ -16,7 +16,7 @@ from reader import (
 )
 from preamble import (
     to_list,
-    to_expr_list,
+    to_expr,
 )
 
 pat = re.compile(r'[01]+')
@@ -38,12 +38,14 @@ def mod_num(num):
         res += '10'
     else:
         res += '01'
+    ln = 1
     pln = 4
     nowMax = 2 ** 4
     while nowMax <= num:
+        ln += 1
         pln += 4
         nowMax *= 2 ** 4
-    res += '1' * pln + '0'
+    res += '1' * ln + '0'
     numstr = ''
     for i in range(pln):
         numstr += str(num % 2)
@@ -52,14 +54,11 @@ def mod_num(num):
 
 
 def mod(expr):
-    # print(type(expr))
-    # print(expr)
     if type(expr) is Atom:
         if isNumerical(expr.Name):
             return mod_num(asNum(expr))
         raise Exception('parse error: mod: illegal num: {}'.format(expr.Name))
-    print([str(e) for e in to_list(expr)])
-    return "".join(["11" + mod(el) for el in to_list(expr)])
+    return "".join(["11" + mod(el) for el in to_list(expr)]) + "1100"
 
 def dem_len_num(p):
     ln = 0
@@ -83,9 +82,9 @@ def dem0(p):
     if head == '00':
         return nil
     elif head == '01':
-        return Atom(dem_len_num(p))
+        return Atom(str(dem_len_num(p)))
     elif head == '10':
-        return Atom(-1 * dem_len_num(p))
+        return Atom(str(-1 * dem_len_num(p)))
     elif head == '11':
         ls = []
         while True:
@@ -93,7 +92,7 @@ def dem0(p):
                 p.get(2)
             if p.peek(2) == '00':
                 p.get(2)
-                return to_expr_list(ls)
+                return to_expr(ls)
             ls.append(dem0(p))
     raise Exception('parse error: dem0')
 
@@ -125,6 +124,4 @@ class Parser:
 
 
 if __name__ == '__main__':
-    # print(dem('1101100001110110010011011000101110100100111110110001010001110111001000000100011011100001001111001100'))
-    # print(mod(dem('1101011011000011100')))
     print(mod(dem('1101100001110110010011011000101110100100111110110001010001110111001000000100011011100001001111001100')))
