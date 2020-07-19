@@ -8,6 +8,16 @@ from defs import (
     Vect,
     nil,
 )
+from parse import (
+    asNum,
+)
+from reader import (
+    isNumerical,
+)
+from preamble import (
+    to_list,
+    to_expr_list,
+)
 
 pat = re.compile(r'[01]+')
 
@@ -19,13 +29,73 @@ def call_api(query):
         raise Exception('通信エラー！変なの送られてきた！ - {}'.format(response.text))
     return response.text
 
+def mod_num(num):
+    if num == 0:
+        return '010'
+    res = ''
+    if num < 0:
+        num = -num
+        res += '10'
+    else:
+        res += '01'
+    pln = 4
+    nowMax = 2 ** 4
+    while nowMax <= num:
+        pln += 4
+        nowMax *= 2 ** 4
+    res += '1' * pln + '0'
+    numstr = ''
+    for i in range(pln):
+        numstr += str(num % 2)
+        num = num // 2
+    return res + numstr[::-1]
+
+
 def mod(expr):
-    return hoge
+    # print(type(expr))
+    # print(expr)
+    if type(expr) is Atom:
+        if isNumerical(expr.Name):
+            return mod_num(asNum(expr))
+        raise Exception('parse error: mod: illegal num: {}'.format(expr.Name))
+    print([str(e) for e in to_list(expr)])
+    return "".join(["11" + mod(el) for el in to_list(expr)])
+
+def dem_len_num(p):
+    ln = 0
+    while True:
+        if p.isEnd():
+            raise Exception('parse error: illegal number')
+        if p.get() == '0':
+            break
+        ln += 4
+
+    num = 0
+    for i in range(ln):
+        num *= 2
+        num += int(p.get())
+
+    return num
+
 
 def dem0(p):
     head = p.get(2)
     if head == '00':
-        return 
+        return nil
+    elif head == '01':
+        return Atom(dem_len_num(p))
+    elif head == '10':
+        return Atom(-1 * dem_len_num(p))
+    elif head == '11':
+        ls = []
+        while True:
+            if p.peek(2) == '11':
+                p.get(2)
+            if p.peek(2) == '00':
+                p.get(2)
+                return to_expr_list(ls)
+            ls.append(dem0(p))
+    raise Exception('parse error: dem0')
 
 def dem(bitseq):
     p = Parser(bitseq)
@@ -52,3 +122,9 @@ class Parser:
         s = self.ls[self.ptr : self.ptr+n]
         self.ptr += n
         return s
+
+
+if __name__ == '__main__':
+    # print(dem('1101100001110110010011011000101110100100111110110001010001110111001000000100011011100001001111001100'))
+    # print(mod(dem('1101011011000011100')))
+    print(mod(dem('1101100001110110010011011000101110100100111110110001010001110111001000000100011011100001001111001100')))

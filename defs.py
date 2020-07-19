@@ -9,7 +9,7 @@ class Atom(Expr):
         self.Name = Name
 
     def __str__(self):
-        return "Atom({})".format(self.Name)
+        return "Atom('{}')".format(self.Name)
 
 
 class Ap(Expr):
