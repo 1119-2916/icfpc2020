@@ -129,7 +129,7 @@ def main():
 
 # これを動くようにしてほしい
 functions = {}
-print(eval(Ap(Atom('ap'), Atom('1'))))
+print(eval(Ap(Atom('ap'), Ap(Atom('i'), Atom('1')))))
 print(eval(PARSE_EXPR('ap ap ap i add 1 2')))
 
 
