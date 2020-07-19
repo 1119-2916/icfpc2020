@@ -35,8 +35,14 @@ while(True):
     (newState, images) = interact(proto=Atom('galaxy'), state=stat, pt=to_expr_vec(vector))
     gui.redraw(pre_multidraw(images))
     gui.mainloop()
-    pos = gui.get_click_point()
-    with open(gui.filename, mode='a') as f:
-        f.write(str(stat)+"\n")
-    vector = [pos[0], pos[1]]
-    stat = newState
+
+    if gui.clickx is not None:
+        pos = gui.get_click_point()
+        if gui.save_flag == 1:
+            print(stat)
+        with open(gui.filename, mode='a') as f:
+            f.write(str(stat)+"\n")
+        vector = [pos[0], pos[1]]
+        stat = newState
+
+    gui.clickx = None
