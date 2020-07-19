@@ -129,11 +129,6 @@ def main():
 
 functions = {}
 functions = PARSE_FUNCTIONS("galaxy.txt")
-# print(eval(Ap(Atom('ap'), Ap(Atom('i'), Atom('1')))))
-# print(eval(PARSE_EXPR('ap ap ap i add 1 2')))
-# print(eval(Atom('galaxy')))
-
-
 
 # print(functions)
 # print({key: str(val) for (key, val) in functions.items()})
