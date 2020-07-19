@@ -50,8 +50,8 @@ def tryEval(expr): # Expr -> Expr
 
     if expr.Evaluated is not None:
         return expr.Evaluated
-    if type(expr) is Atom and functions[expr.Name] is not None:
-        return functions[expr.Name]
+    if type(expr) is Atom and functions.get(expr.Name) is not None:
+        return functions.get(expr.Name)
     if type(expr) is Ap:
         fun = eval(expr.Fun)
         x = expr.Arg
@@ -124,11 +124,11 @@ def main():
 
 
 # これを動くようにしてほしい
-# functions = {}
-# print(eval(Ap(Atom('i'), Atom('1'))))
+functions = {}
+print(eval(Ap(Atom('i'), Atom('1'))))
 
 
 
-functions = PARSE_FUNCTIONS("galaxy.txt")
-print(functions)
-print({key: str(val) for (key, val) in functions.items()})
+# functions = PARSE_FUNCTIONS("galaxy.txt")
+# print(functions)
+# print({key: str(val) for (key, val) in functions.items()})
