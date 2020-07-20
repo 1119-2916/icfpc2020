@@ -16,8 +16,8 @@ from reader import (
     isNumerical,
 )
 from util import (
-    to_list,
-    to_expr,
+    mod,
+    dem,
 )
 
 pat = re.compile(r'[01]+')
@@ -30,74 +30,6 @@ def call_api(query):
         raise Exception('通信エラー！変なの送られてきた！ - {}'.format(response.text))
     return response.text
 
-def mod_num(num):
-    if num == 0:
-        return '010'
-    res = ''
-    if num < 0:
-        num = -num
-        res += '10'
-    else:
-        res += '01'
-    ln = 1
-    pln = 4
-    nowMax = 2 ** 4
-    while nowMax <= num:
-        ln += 1
-        pln += 4
-        nowMax *= 2 ** 4
-    res += '1' * ln + '0'
-    numstr = ''
-    for i in range(pln):
-        numstr += str(num % 2)
-        num = num // 2
-    return res + numstr[::-1]
-
-
-def mod(expr):
-    if type(expr) is Atom:
-        if isNumerical(expr.Name):
-            return mod_num(asNum(expr))
-        if expr.Name == 'nil':
-            return '00'
-        raise Exception('parse error: mod: illegal num: {}'.format(expr.Name))
-    return '11' + mod(eval(Ap(Atom('car'), expr))) + mod(eval(Ap(Atom('cdr'), expr)))
-
-def dem_len_num(p):
-    ln = 0
-    while True:
-        if p.isEnd():
-            raise Exception('parse error: illegal number')
-        if p.get() == '0':
-            break
-        ln += 4
-
-    num = 0
-    for i in range(ln):
-        num *= 2
-        num += int(p.get())
-
-    return num
-
-
-def dem0(p):
-    head = p.get(2)
-    if head == '00':
-        return nil
-    elif head == '01':
-        return Atom(str(dem_len_num(p)))
-    elif head == '10':
-        return Atom(str(-1 * dem_len_num(p)))
-    elif head == '11':
-        e1 = dem0(p)
-        e2 = dem0(p)
-        return Ap(Ap(Atom('cons'), e1), e2)
-    raise Exception('parse error: dem0')
-
-def dem(bitseq):
-    p = Parser(bitseq)
-    return dem0(p)
-
 def send_message(expr):
     query = mod(expr)
     print("send: {}".format(query))
@@ -106,23 +38,6 @@ def send_message(expr):
     print("recieved: {}".format(raw))
     return answer
 
-
-class Parser:
-    def __init__(self, ls):
-        self.ls = ls
-        self.ptr = 0
-
-    def isEnd(self):
-        return len(self.ls) <= self.ptr
-
-    def peek(self, n=1):
-        return self.ls[self.ptr : self.ptr+n]
-
-    def get(self, n=1):
-        s = self.ls[self.ptr : self.ptr+n]
-        self.ptr += n
-        return s
-
-
 if __name__ == '__main__':
     print(mod(dem('1101100001111101100010110110001100110110010000')))
+
