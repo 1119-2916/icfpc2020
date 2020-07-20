@@ -60,6 +60,8 @@ def to_list(expr):
     return res
 
 def to_list_rec(expr):
+    if check_nil(expr):
+        return []
     if type(expr) is Atom:
         return asNum(expr)
 

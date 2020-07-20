@@ -72,4 +72,6 @@ def main():
     print('Server response:', res.text)
 
 if __name__ == '__main__':
+    # print(dem("110110000111011000101100110000"))
+    # print(to_list_rec(dem("110110000111011000101100110000")))
     main()
