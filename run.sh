@@ -1,4 +1,3 @@
 #!/bin/sh
 
-cd build
-./main "$@" || echo "run error code: $?"
+python app/main.py "$@" || echo "run error code: $?"
