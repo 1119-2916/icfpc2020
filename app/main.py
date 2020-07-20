@@ -4,6 +4,7 @@ from util import (
     mod,
     dem,
     to_expr,
+    to_list_rec,
 )
 sys.setrecursionlimit(1000000)
 
@@ -16,10 +17,12 @@ def send(server_url, request):
         print('Response body:', res.text)
         exit(2)
     print('Server response:', res.text)
-    return dem(res.text)
+    demed = dem(res.text)
+    print('dem(Server response):', demed)
+    return demed
 
 def makeJoinRequest(player_key):
-    return mod(to_expr([2, player_key]))
+    return mod(to_expr([2, player_key, []]))
 
 def makeStartRequest(player_key, gameResponse, x0, x1, x2, x3):
     # x3 should be >= 1
@@ -69,4 +72,5 @@ def main():
     print('Server response:', res.text)
 
 if __name__ == '__main__':
-    main()
+    print(to_list_rec(dem("110110001111011111111111111111000110101001010100011100010011101000110110011110001110011101110011111011000011101100001110110000111011000010000")))
+    # main()

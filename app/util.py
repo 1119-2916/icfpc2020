@@ -59,6 +59,26 @@ def to_list(expr):
 
     return res
 
+def to_list_rec(expr):
+    if type(expr) is Atom:
+        return asNum(expr)
+
+    res = []
+    if not check_list(expr):
+        raise Exception('invalid list!')
+    while not check_nil(expr):
+        head = eval(Ap(Atom('car'), expr))
+        res.append(to_list_rec(head))
+        expr = eval(Ap(Atom('cdr'), expr))
+        if type(expr) is Atom:
+            if not check_nil(expr):
+                res.append(to_list_rec(expr))
+            break
+        if not check_list(expr):
+            raise Exception('invalid list!')
+
+    return res
+
 def to_expr(vs):
     if type(vs) == list and len(vs) == 0:
         return nil
