@@ -7,6 +7,10 @@ from defs import (
 )
 from parse import (
     eval,
+    asNum,
+)
+from reader import (
+    isNumerical,
 )
 
 def check_nil(expr):
@@ -58,7 +62,7 @@ def to_list(expr):
 def to_expr(vs):
     if type(vs) == list and len(vs) == 0:
         return nil
-    if type(vs) == int:
+    if type(vs) == int or type(vs) == str:
         return Atom(str(vs))
     if isinstance(vs, Expr):
         return vs
