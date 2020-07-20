@@ -17,7 +17,7 @@ def send(server_url, request):
         print('Response body:', res.text)
         exit(2)
     print('Server response:', res.text)
-    demed = dem(res.text)
+    demed = to_list_rec(dem(res.text))
     print('dem(Server response):', demed)
     return demed
 
