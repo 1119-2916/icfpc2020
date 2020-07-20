@@ -8,7 +8,8 @@ from util import (
 sys.setrecursionlimit(1000000)
 
 def send(server_url, request):
-    res = requests.post(server_url, data=request)
+    print(request)
+    res = requests.post(server_url + "/aliens/send", data=request)
     if res.status_code != 200:
         print('Unexpected server response:')
         print('HTTP code:', res.status_code)
