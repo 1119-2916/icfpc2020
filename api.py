@@ -13,7 +13,7 @@ pat = re.compile(r'[01]+')
 
 def call_api(query):
     response = requests.post(
-        'https://icfpc2020-api.testkontur.ru/aliens/send?apiKey=***REMOVED***',
+        'api.pegovka.space',
         query)
     if not pat.match(response.text):
         raise Exception('通信エラー！変なの送られてきた！ - {}'.format(response.text))
